@@ -1,4 +1,4 @@
-package handlers
+package controller
 
 import (
 	"battle-game/internal/model"
@@ -14,7 +14,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := service.RegisterNewUser(db, &user); err != nil {
+	if err := service.NewUser(db, &user); err != nil {
 		http.Error(w, "Failed to register user", http.StatusInternalServerError)
 		return
 	}

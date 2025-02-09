@@ -1,14 +1,19 @@
-package service
+package config
 
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 )
 
-func NewDB() *sql.DB {
+func InitDB() *sql.DB {
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
+
 	connStr := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
 		viper.GetString("DB_USER"),
 		viper.GetString("DB_PASSWORD"),
@@ -17,11 +22,11 @@ func NewDB() *sql.DB {
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
 	}
 
 	if err = db.Ping(); err != nil {
-		panic(err)
+		log.Fatalf("Erro ao verificar a conexão do banco de dados: %v", err)
 	}
 
 	return db
