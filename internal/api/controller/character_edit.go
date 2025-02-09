@@ -1,4 +1,4 @@
-package handlers
+package controller
 
 import (
 	"battle-game/internal/model"
@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AddCharacters(w http.ResponseWriter, r *http.Request) {
+func EditCharacter(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID, err := strconv.Atoi(vars["userID"])
 	if err != nil {
@@ -24,16 +24,12 @@ func AddCharacters(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i := range characters {
-		characters[i].UserID = uint(userID)
-	}
-
-	if err := service.AddCharacters(db, characters); err != nil {
+	if err := service.ReplaceCharacters(db, userID, characters); err != nil {
 		http.Error(w, "Failed to add characters", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Character assigned successfully"))
+	w.Write([]byte("User character edited successfully"))
 }
